@@ -1,0 +1,17 @@
+# Gitleaks: block accidental commit of real secrets.
+# Documented dev/test placeholders (see README) are allowlisted by regex — not real credentials.
+
+title = "bank-management"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Documented non-production placeholders only (never put real keys here)"
+regexes = [
+  '''change-me''',
+  '''(?i)dev-jwt-secret''',
+  '''(?i)dev-pan-encryption''',
+  '''test-jwt-secret-must-be-at-least-32''',
+  '''test-pan-encryption-secret-min-16''',
+]
