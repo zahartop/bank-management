@@ -26,7 +26,10 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(
+            value = "/login",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Login", description = "Authenticates user and returns a JWT access token.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Authenticated",

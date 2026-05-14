@@ -37,7 +37,9 @@ public class CardController {
     private final CardService cardService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Create card", description = "Creates a card. PAN is stored encrypted; responses contain a masked PAN only.")
+    @Operation(
+            summary = "Create card",
+            description = "Creates a card. PAN is stored encrypted; responses contain a masked PAN only.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Card created",
                     content = @Content(schema = @Schema(implementation = CardResponse.class))),

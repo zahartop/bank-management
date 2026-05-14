@@ -6,11 +6,6 @@
     <property name="charset" value="UTF-8"/>
     <property name="severity" value="warning"/>
 
-    <module name="SuppressionFilter">
-        <property name="file" value="suppressions.xml"/>
-        <property name="optional" value="false"/>
-    </module>
-
     <module name="LineLength">
         <property name="max" value="120"/>
         <property name="ignorePattern" value="^package.*|^import.*"/>

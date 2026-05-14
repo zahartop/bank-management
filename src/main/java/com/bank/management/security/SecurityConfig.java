@@ -28,7 +28,9 @@ public class SecurityConfig {
     private final JsonAccessDeniedHandler jsonAccessDeniedHandler;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, DaoAuthenticationProvider daoAuthenticationProvider)
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            DaoAuthenticationProvider daoAuthenticationProvider)
             throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

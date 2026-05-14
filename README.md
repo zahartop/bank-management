@@ -19,12 +19,12 @@ REST API для управления банковскими картами: JWT,
 | Job | Зачем |
 |-----|--------|
 | **`secrets-scan`** | Gitleaks + Trivy fs (секреты). Без JDK, полный `fetch-depth` только здесь. |
-| **`maven-verify`** | Вызывает переиспользуемый workflow [`.github/workflows/reusable-maven-verify.yml`](.github/workflows/reusable-maven-verify.yml): `mvn verify` (компиляция, тесты, **Checkstyle**). Матрица JDK — сейчас `17`; добавь `21` в `matrix.java-version` в [`ci.yml`](.github/workflows/ci.yml), когда проект будет на Java 21. |
+| **`maven-verify`** | Вызывает [reusable-maven-verify.yml](.github/workflows/reusable-maven-verify.yml): `mvn verify`. Матрица в [`ci.yml`](.github/workflows/ci.yml) через `matrix.include` — поля `java-version` и **`maven-args`** (для мульти-модуля, например `-pl billing -am`). Добавь вторую строку `include` с `java-version: "21"`, когда проект перейдёт на JDK 21. |
 | **`container-scan`** | Сборка Docker-образа + Trivy image (HIGH/CRITICAL в лог; `exit-code: 0` у образа — при желании поменяй на `1`). |
 
-**Масштабирование / монорепо:** в корне [`ci.yml`](.github/workflows/ci.yml) задан `env.MAVEN_ARGS` — сюда можно вписать аргументы Maven для подмодулей, например `-pl billing-service -am`. Родительский репозиторий может вызывать тот же `reusable-maven-verify.yml` через `uses: org/repo/.github/workflows/reusable-maven-verify.yml@main` и передать `maven-args` и при необходимости **`working-directory`** (путь к каталогу с `pom.xml`, если проект лежит в подпапке монорепы).
+**Масштабирование / монорепо:** в [`ci.yml`](.github/workflows/ci.yml) в `matrix.include` задай **`maven-args`** (аргументы Maven для подмодулей). В `with:` у `workflow_call` нельзя использовать `env` — поэтому аргументы идут через матрицу, а не через `env.MAVEN_ARGS`. Родительский репозиторий может вызывать `reusable-maven-verify.yml` и передать `maven-args` и **`working-directory`**.
 
-**Checkstyle:** `SuppressionFilter` подключает [`config/checkstyle/suppressions.xml`](config/checkstyle/suppressions.xml) по **относительному пути** от `checkstyle.xml` (без `${config_loc}` — так стабильно и локально, и в CI).
+**Checkstyle:** подавления подключаются через **`suppressionsLocation`** в `pom.xml` (Maven сам мержит [`suppressions.xml`](config/checkstyle/suppressions.xml) с основным конфигом — без `${config_loc}`).
 
 Локально перед пушем:
 
