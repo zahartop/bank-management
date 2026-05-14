@@ -15,11 +15,18 @@ on:
         description: Extra args for mvn (e.g. -pl module -am)
         type: string
         default: ""
+      working-directory:
+        description: Directory with pom.xml (for monorepos)
+        type: string
+        default: "."
 
 jobs:
   maven-verify:
     name: JDK ${{ inputs.java-version }} — mvn verify
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

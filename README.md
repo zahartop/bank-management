@@ -22,7 +22,7 @@ REST API для управления банковскими картами: JWT,
 | **`maven-verify`** | Вызывает переиспользуемый workflow [`.github/workflows/reusable-maven-verify.yml`](.github/workflows/reusable-maven-verify.yml): `mvn verify` (компиляция, тесты, **Checkstyle**). Матрица JDK — сейчас `17`; добавь `21` в `matrix.java-version` в [`ci.yml`](.github/workflows/ci.yml), когда проект будет на Java 21. |
 | **`container-scan`** | Сборка Docker-образа + Trivy image (HIGH/CRITICAL в лог; `exit-code: 0` у образа — при желании поменяй на `1`). |
 
-**Масштабирование / монорепо:** в корне [`ci.yml`](.github/workflows/ci.yml) задан `env.MAVEN_ARGS` — сюда можно вписать аргументы Maven для подмодулей, например `-pl billing-service -am`. Родительский репозиторий может вызывать тот же `reusable-maven-verify.yml` через `uses: org/repo/.github/workflows/reusable-maven-verify.yml@main` и передать `maven-args`.
+**Масштабирование / монорепо:** в корне [`ci.yml`](.github/workflows/ci.yml) задан `env.MAVEN_ARGS` — сюда можно вписать аргументы Maven для подмодулей, например `-pl billing-service -am`. Родительский репозиторий может вызывать тот же `reusable-maven-verify.yml` через `uses: org/repo/.github/workflows/reusable-maven-verify.yml@main` и передать `maven-args` и при необходимости **`working-directory`** (путь к каталогу с `pom.xml`, если проект лежит в подпапке монорепы).
 
 **Checkstyle:** `SuppressionFilter` подключает [`config/checkstyle/suppressions.xml`](config/checkstyle/suppressions.xml) по **относительному пути** от `checkstyle.xml` (без `${config_loc}` — так стабильно и локально, и в CI).
 

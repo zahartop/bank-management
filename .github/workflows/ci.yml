@@ -59,6 +59,7 @@ jobs:
       java-version: ${{ matrix.java-version }}
       java-distribution: temurin
       maven-args: ${{ env.MAVEN_ARGS }}
+      working-directory: "."
 
   container-scan:
     name: Docker image vulnerabilities
