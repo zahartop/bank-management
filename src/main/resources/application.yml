@@ -1,0 +1,66 @@
+spring:
+  application:
+    name: bank-management
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bank_management
+    username: bank
+    password: bank
+    hikari:
+      maximum-pool-size: 10
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+        format_sql: true
+    show-sql: false
+  liquibase:
+    enabled: true
+    change-log: classpath:db/migration/db.changelog-master.yaml
+
+server:
+  port: 8080
+  error:
+    include-message: always
+
+management:
+  endpoints:
+    web:
+      base-path: /
+      path-mapping:
+        health: health
+        info: info
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when_authorized
+      probes:
+        enabled: true
+
+info:
+  app:
+    name: bank-management
+    description: Bank card management REST API
+
+app:
+  jwt:
+    issuer: bank-management
+    secret: ${APP_JWT_SECRET:change-me-use-at-least-32-chars-for-hs256-secret!!}
+    access-token-minutes: 60
+  crypto:
+    pan:
+      secret: ${APP_CRYPTO_PAN_SECRET:change-me-pan-encryption-secret-min-16-chars}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    org.hibernate.SQL: WARN

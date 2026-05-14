@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: bank-management-postgres
+    environment:
+      POSTGRES_DB: bank_management
+      POSTGRES_USER: bank
+      POSTGRES_PASSWORD: bank
+    ports:
+      - "5432:5432"
+    volumes:
+      - bank_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bank -d bank_management"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bank-management-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      APP_JWT_SECRET: "dev-jwt-secret-change-me-min-32-chars-long!!"
+      APP_CRYPTO_PAN_SECRET: "dev-pan-encryption-secret-16+"
+    ports:
+      - "8080:8080"
+
+volumes:
+  bank_pg_data:

@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: bank-management
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bank_management
+    username: bank
+    password: bank
+  liquibase:
+    enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+app:
+  jwt:
+    secret: test-jwt-secret-must-be-at-least-32-characters-long!!
+  crypto:
+    pan:
+      secret: test-pan-encryption-secret-min-16-characters
