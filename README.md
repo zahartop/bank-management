@@ -14,14 +14,17 @@ REST API для управления банковскими картами: JWT,
 ![CI](https://github.com/YOUR_USER/bank-management/actions/workflows/ci.yml/badge.svg)
 ```
 
-В pipeline:
+В pipeline (три job’а, легко расширять):
 
-| Этап | Зачем |
-|------|--------|
-| **Gitleaks** | Ловит случайно закоммиченные секреты (токены, ключи, пароли). |
-| **Trivy (fs, secret)** | Второй слой по утечкам в репозитории (кроме файлов с *только* задокументированными плейсхолдерами — см. workflow `skip-files`). |
-| **`mvn verify`** | Компиляция, тесты, **Checkstyle**. |
-| **Docker build + Trivy (image)** | Уязвимости в собранном образе (HIGH/CRITICAL в лог; `exit-code: 0`, чтобы не ронять CI на шуме базового JRE — при желании поменяй на `1`). |
+| Job | Зачем |
+|-----|--------|
+| **`secrets-scan`** | Gitleaks + Trivy fs (секреты). Без JDK, полный `fetch-depth` только здесь. |
+| **`maven-verify`** | Вызывает переиспользуемый workflow [`.github/workflows/reusable-maven-verify.yml`](.github/workflows/reusable-maven-verify.yml): `mvn verify` (компиляция, тесты, **Checkstyle**). Матрица JDK — сейчас `17`; добавь `21` в `matrix.java-version` в [`ci.yml`](.github/workflows/ci.yml), когда проект будет на Java 21. |
+| **`container-scan`** | Сборка Docker-образа + Trivy image (HIGH/CRITICAL в лог; `exit-code: 0` у образа — при желании поменяй на `1`). |
+
+**Масштабирование / монорепо:** в корне [`ci.yml`](.github/workflows/ci.yml) задан `env.MAVEN_ARGS` — сюда можно вписать аргументы Maven для подмодулей, например `-pl billing-service -am`. Родительский репозиторий может вызывать тот же `reusable-maven-verify.yml` через `uses: org/repo/.github/workflows/reusable-maven-verify.yml@main` и передать `maven-args`.
+
+**Checkstyle:** `SuppressionFilter` подключает [`config/checkstyle/suppressions.xml`](config/checkstyle/suppressions.xml) по **относительному пути** от `checkstyle.xml` (без `${config_loc}` — так стабильно и локально, и в CI).
 
 Локально перед пушем:
 

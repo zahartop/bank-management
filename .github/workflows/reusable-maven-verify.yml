@@ -1,0 +1,35 @@
+# Reusable: compile + tests + Checkstyle. Call from root CI or from a monorepo parent workflow.
+name: Reusable Maven verify
+
+on:
+  workflow_call:
+    inputs:
+      java-version:
+        description: JDK major version
+        type: string
+        default: "17"
+      java-distribution:
+        type: string
+        default: "temurin"
+      maven-args:
+        description: Extra args for mvn (e.g. -pl module -am)
+        type: string
+        default: ""
+
+jobs:
+  maven-verify:
+    name: JDK ${{ inputs.java-version }} — mvn verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ inputs.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ inputs.java-version }}
+          distribution: ${{ inputs.java-distribution }}
+          cache: maven
+
+      - name: Maven verify
+        run: mvn -B verify ${{ inputs.maven-args }}
